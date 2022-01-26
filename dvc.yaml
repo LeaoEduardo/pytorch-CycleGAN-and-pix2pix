@@ -1,0 +1,42 @@
+stages:
+  
+  download_dataset:
+    cmd: sh ./datasets/download_pix2pix_dataset.sh facades
+    deps:
+      - datasets/download_pix2pix_dataset.sh
+    outs: 
+      - datasets/facades/
+  
+  download_weights:
+    cmd: sh ./scripts/download_pix2pix_model.sh facades_label2photo
+    deps:
+      - scripts/download_pix2pix_model.sh
+    outs:
+      - checkpoints/facades_label2photo_pretrained/latest_net_G.pth
+
+  load_params:
+    cmd: python params.py
+    deps:
+      - params.py
+    outs:
+      - .env
+
+  train:
+    cmd: source .env && python train.py --dataroot ./datasets/facades --name facades_pix2pix --model pix2pix --n_epochs $N_EPOCHS  --n_epochs_decay $N_EPOCHS_DECAY --gpu_ids -1
+    deps:
+      - .env
+      - datasets/facades/
+      - checkpoints/facades_label2photo_pretrained/latest_net_G.pth
+    params:
+      - params.py:
+        - N_EPOCHS
+        - N_EPOCHS_DECAY
+    outs:
+      - checkpoints/facades_pix2pix
+
+  # test:
+  #   cmd: python test.py --dataroot ./datasets/facades --model pix2pix --name facades_pix2pix --gpu_ids -1
+  #   deps:
+  #     - checkpoints/facades_pix2pix
+  #   outs:
+  #     - results/facades_pix2pix/

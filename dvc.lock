@@ -1,0 +1,57 @@
+schema: '2.0'
+stages:
+  download_dataset:
+    cmd: sh ./datasets/download_pix2pix_dataset.sh facades
+    deps:
+    - path: datasets/download_pix2pix_dataset.sh
+      md5: c3ffc07c3bbde1fc36bfeab51c5a9eb8
+      size: 981
+    outs:
+    - path: datasets/facades/
+      md5: 0dfe70a3412b5a73917a2c6c74a72fb3.dir
+      size: 31228725
+      nfiles: 606
+  download_weights:
+    cmd: sh ./scripts/download_pix2pix_model.sh facades_label2photo
+    deps:
+    - path: scripts/download_pix2pix_model.sh
+      md5: 3f926fd3fff89c4c234379ac1b4004fa
+      size: 339
+    outs:
+    - path: checkpoints/facades_label2photo_pretrained/latest_net_G.pth
+      md5: 1b43b05144a2e953156562c7c187a0e4
+      size: 217704720
+  load_params:
+    cmd: python params.py
+    deps:
+    - path: params.py
+      md5: 606fc8aac2f8d82fe9242ce1de258005
+      size: 245
+    outs:
+    - path: .env
+      md5: 86d12b6feedd7d97e45cca28a019c393
+      size: 42
+  train:
+    cmd: source .env && python train.py --dataroot ./datasets/facades --name facades_pix2pix
+      --model pix2pix --n_epochs $N_EPOCHS  --n_epochs_decay $N_EPOCHS_DECAY --gpu_ids
+      -1
+    deps:
+    - path: .env
+      md5: 86d12b6feedd7d97e45cca28a019c393
+      size: 42
+    - path: checkpoints/facades_label2photo_pretrained/latest_net_G.pth
+      md5: 1b43b05144a2e953156562c7c187a0e4
+      size: 217704720
+    - path: datasets/facades/
+      md5: 0dfe70a3412b5a73917a2c6c74a72fb3.dir
+      size: 31228725
+      nfiles: 606
+    params:
+      params.py:
+        N_EPOCHS: 1
+        N_EPOCHS_DECAY: 0
+    outs:
+    - path: checkpoints/facades_pix2pix
+      md5: 286f75143571a60fc7491276801979fd.dir
+      size: 320850
+      nfiles: 6

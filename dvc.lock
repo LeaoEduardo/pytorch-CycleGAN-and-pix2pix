@@ -33,11 +33,11 @@ stages:
       size: 42
   train:
     cmd: source .env && python train.py --dataroot ./datasets/facades --name facades_pix2pix
-      --model pix2pix --n_epochs $N_EPOCHS  --n_epochs_decay $N_EPOCHS_DECAY --gpu_ids
-      -1
+      --model pix2pix --n_epochs $n_epochs --save_epoch_freq $n_epochs --n_epochs_decay
+      $n_epochs_decay --gpu_ids -1
     deps:
     - path: .env
-      md5: 86d12b6feedd7d97e45cca28a019c393
+      md5: 1f8dda20ae7d4c55f8b0af74aa7801dc
       size: 42
     - path: checkpoints/facades_label2photo_pretrained/latest_net_G.pth
       md5: 1b43b05144a2e953156562c7c187a0e4
@@ -47,11 +47,24 @@ stages:
       size: 31228725
       nfiles: 606
     params:
-      params.py:
-        N_EPOCHS: 1
-        N_EPOCHS_DECAY: 0
+      params.yaml:
+        n_epochs: 1
+        n_epochs_decay: 0
     outs:
     - path: checkpoints/facades_pix2pix
-      md5: 286f75143571a60fc7491276801979fd.dir
-      size: 320850
-      nfiles: 6
+      md5: 9ca9c4323b18ffb17f74d839815f7d8e.dir
+      size: 457970979
+      nfiles: 10
+  write_env:
+    cmd: python write_env.py
+    deps:
+    - path: params.yaml
+      md5: 13120099aa44073fb147737b67181199
+      size: 29
+    - path: write_env.py
+      md5: d14aa0fca59cd9d02c28b98ea95b7c1a
+      size: 231
+    outs:
+    - path: .env
+      md5: 1f8dda20ae7d4c55f8b0af74aa7801dc
+      size: 42

@@ -14,23 +14,23 @@ stages:
     outs:
       - checkpoints/facades_label2photo_pretrained/latest_net_G.pth
 
-  load_params:
-    cmd: python params.py
+  write_env:
+    cmd: python write_env.py
     deps:
-      - params.py
+      - params.yaml
+      - write_env.py
     outs:
       - .env
 
   train:
-    cmd: source .env && python train.py --dataroot ./datasets/facades --name facades_pix2pix --model pix2pix --n_epochs $N_EPOCHS  --n_epochs_decay $N_EPOCHS_DECAY --gpu_ids -1
+    cmd: source .env && python train.py --dataroot ./datasets/facades --name facades_pix2pix --model pix2pix --n_epochs $n_epochs --save_epoch_freq $n_epochs --n_epochs_decay $n_epochs_decay --gpu_ids -1
     deps:
       - .env
       - datasets/facades/
       - checkpoints/facades_label2photo_pretrained/latest_net_G.pth
     params:
-      - params.py:
-        - N_EPOCHS
-        - N_EPOCHS_DECAY
+      - n_epochs
+      - n_epochs_decay
     outs:
       - checkpoints/facades_pix2pix
 

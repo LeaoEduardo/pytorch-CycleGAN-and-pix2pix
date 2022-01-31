@@ -68,3 +68,26 @@ stages:
     - path: .env
       md5: ffc330375ad584c2425b0f18eee205e3
       size: 42
+  test:
+    cmd: python test.py --dataroot ./datasets/facades --model pix2pix --name facades_pix2pix
+      --gpu_ids 0
+    deps:
+    - path: checkpoints/facades_pix2pix
+      md5: 393c592c699130b071cf56d659c785b2.dir
+      size: 689033873
+      nfiles: 40
+    outs:
+    - path: results/facades_pix2pix/
+      md5: 01d6aceb7972b3d32120ebcecf47a04c.dir
+      size: 13338788
+      nfiles: 151
+  plot:
+    cmd: python write_plots.py checkpoints/facades_pix2pix/loss_log.txt
+    deps:
+    - path: checkpoints/facades_pix2pix/loss_log.txt
+      md5: dc7b7615897c8f867978e97315086aaf
+      size: 4239
+    outs:
+    - path: loss.csv
+      md5: b9abcb496ae11f4f9c29981155289155
+      size: 1459

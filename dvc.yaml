@@ -34,9 +34,17 @@ stages:
     outs:
       - checkpoints/facades_pix2pix
 
-  # test:
-  #   cmd: python test.py --dataroot ./datasets/facades --model pix2pix --name facades_pix2pix --gpu_ids -1
-  #   deps:
-  #     - checkpoints/facades_pix2pix
-  #   outs:
-  #     - results/facades_pix2pix/
+  test:
+    cmd: python test.py --dataroot ./datasets/facades --model pix2pix --name facades_pix2pix --gpu_ids 0
+    deps:
+      - checkpoints/facades_pix2pix
+    outs:
+      - results/facades_pix2pix/
+
+  plot:
+    cmd: python write_plots.py checkpoints/facades_pix2pix/loss_log.txt
+    deps:
+      - checkpoints/facades_pix2pix/loss_log.txt
+    plots:
+      - loss.csv:
+          cache: false

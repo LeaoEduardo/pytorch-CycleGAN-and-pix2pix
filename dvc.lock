@@ -1,16 +1,16 @@
 schema: '2.0'
 stages:
   download_dataset:
-    cmd: sh ./datasets/download_pix2pix_dataset.sh facades
+    cmd: sh ./datasets/download_pix2pix_dataset.sh cityscapes
     deps:
     - path: datasets/download_pix2pix_dataset.sh
       md5: c3ffc07c3bbde1fc36bfeab51c5a9eb8
       size: 981
     outs:
-    - path: datasets/facades/
-      md5: 0dfe70a3412b5a73917a2c6c74a72fb3.dir
-      size: 31228725
-      nfiles: 606
+    - path: datasets/cityscapes/
+      md5: 4524c69da75d122368e195edf50cd2c7.dir
+      size: 110885505
+      nfiles: 3475
   download_weights:
     cmd: sh ./scripts/download_pix2pix_model.sh facades_label2photo
     deps:
@@ -32,24 +32,25 @@ stages:
       md5: 86d12b6feedd7d97e45cca28a019c393
       size: 42
   train:
-    cmd: python train.py --model pix2pix --dataroot ./datasets/facades --name facades_pix2pix
-      --n_epochs 5 --n_epochs_decay 5 --netG unet_256 --direction BtoA --gpu_ids 0
+    cmd: python train.py --model pix2pix --dataroot ./datasets/cityscapes --name cityscapes_pix2pix
+      --n_epochs 100 --n_epochs_decay 67 --netG unet_256 --direction BtoA --gpu_ids
+      0
     deps:
-    - path: datasets/facades/
-      md5: 0dfe70a3412b5a73917a2c6c74a72fb3.dir
-      size: 31228725
-      nfiles: 606
+    - path: datasets/cityscapes/
+      md5: acd3964250f118728577776760057614.dir
+      size: 110885505
+      nfiles: 3475
     params:
       params.yaml:
-        dataset: facades
-        n_epochs: 5
-        n_epochs_decay: 5
+        dataset: cityscapes
+        n_epochs: 100
+        n_epochs_decay: 67
         netG: unet_256
     outs:
-    - path: checkpoints/facades_pix2pix
-      md5: e7252fa3d428f589d4b2fa2f749bdd6f.dir
-      size: 689321133
-      nfiles: 39
+    - path: checkpoints/cityscapes_pix2pix
+      md5: f20aac2dd26cea6062ffaba67dca47dc.dir
+      size: 7817912091
+      nfiles: 576
   write_env:
     cmd: python write_env.py
     deps:
@@ -65,17 +66,17 @@ stages:
       size: 46
       isexec: true
   test:
-    cmd: python test.py --model pix2pix --dataroot ./datasets/facades --name facades_pix2pix
+    cmd: python test.py --model pix2pix --dataroot ./datasets/cityscapes --name cityscapes_pix2pix
       --direction BtoA --gpu_ids 0
     deps:
-    - path: checkpoints/facades_pix2pix
-      md5: 36c6814579f4d0283863f1aef5e1b8e5.dir
-      size: 689323525
-      nfiles: 40
+    - path: checkpoints/cityscapes_pix2pix
+      md5: f20aac2dd26cea6062ffaba67dca47dc.dir
+      size: 7817912091
+      nfiles: 576
     outs:
-    - path: results/facades_pix2pix/
-      md5: 7df8d67ce5eb7900500c3227fd680a65.dir
-      size: 14223633
+    - path: results/cityscapes_pix2pix/
+      md5: 5f270fb46b413ecc22ce2f38dd79fcf3.dir
+      size: 12380304
       nfiles: 151
   plot:
     cmd: python write_plots.py checkpoints/facades_pix2pix/loss_log.txt facades

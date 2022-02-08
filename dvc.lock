@@ -33,7 +33,7 @@ stages:
       size: 42
   train:
     cmd: python train.py --model pix2pix --dataroot ./datasets/cityscapes --name cityscapes_pix2pix
-      --n_epochs 100 --n_epochs_decay 67 --netG unet_256 --direction BtoA --gpu_ids
+      --n_epochs 100 --n_epochs_decay 100 --netG unet_256 --direction BtoA --gpu_ids
       0
     deps:
     - path: datasets/cityscapes/
@@ -44,13 +44,13 @@ stages:
       params.yaml:
         dataset: cityscapes
         n_epochs: 100
-        n_epochs_decay: 67
+        n_epochs_decay: 100
         netG: unet_256
     outs:
     - path: checkpoints/cityscapes_pix2pix
-      md5: f20aac2dd26cea6062ffaba67dca47dc.dir
-      size: 7817912091
-      nfiles: 576
+      md5: 02809d968566a71a975b895baf2ecb0f.dir
+      size: 9427019908
+      nfiles: 686
   write_env:
     cmd: python write_env.py
     deps:
@@ -70,13 +70,13 @@ stages:
       --direction BtoA --gpu_ids 0
     deps:
     - path: checkpoints/cityscapes_pix2pix
-      md5: f20aac2dd26cea6062ffaba67dca47dc.dir
-      size: 7817912091
-      nfiles: 576
+      md5: 02809d968566a71a975b895baf2ecb0f.dir
+      size: 9427019908
+      nfiles: 686
     outs:
     - path: results/cityscapes_pix2pix/
-      md5: 5f270fb46b413ecc22ce2f38dd79fcf3.dir
-      size: 12380304
+      md5: 1c5192c0746637f07d1bf10bc1121124.dir
+      size: 12390722
       nfiles: 151
   plot:
     cmd: python write_plots.py checkpoints/facades_pix2pix/loss_log.txt facades
